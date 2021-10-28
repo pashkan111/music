@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="google-signin-client_id" content="21347099431-sc85nsvprj8sjgcp6r619gc5t9sf05n1.apps.googleusercontent.com">
+    <title>Document</title>
+</head>
+<body>
+    <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+    <div id=my-signup></div>
+    <script>
+        
+        function onFailure(er){
+            console.log(er)
+        }
+        
+        function onSuccess(googleUser){
+            let profile = googleUser.getBasicProfile()
+            console.log(profile)
+            let token = googleUser.getAuthResponse().id_token
+            console.log(token)    
+        }
+
+        function renderButton(){
+            gapi.signin2.render('my-signup', {
+                'scope': 'profile email',
+                'wigth': 300,
+                'height': 50,
+                'longtitle': true,
+                'theme': 'dark',
+                'onsuccess': onSuccess,
+                'onfailure': onFailure
+            })
+        }
+        </script>
+</body>
+</html>
