@@ -1,6 +1,4 @@
 from django.shortcuts import render
-from .serializers import CredentialsSerializer
-
 
 
 def sign_in(request):
@@ -11,4 +9,4 @@ def log_in(request):
     return render(request, 'accounts/login.html')
 
 
-# class Creden
+
