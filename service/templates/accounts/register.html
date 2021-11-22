@@ -8,23 +8,23 @@
     <title>Login</title>
 </head>
 <body>
-    <h3>Войти</h3>
+    <h3>Регистрация</h3>
     <div>
         <input placeholder="email" class="form-control" id="email"/>
         <input placeholder="password" class="form-control" id="password"/>
     </div>
     <div>
-        <input type="submit" id='send-data' value="Войти"/>
+        <input type="submit" id='send-data' value="Зарегистрироваться"/>
+        <p><a href="#">Уже зарегистрированы?</a></p>
     </div>
     <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
     <script src="{% static 'js/utils.js'%}"></script>
     <script>
 
-        const login_url = 'http://127.0.0.1:8000/account/api/login/'
+        const register_url = 'http://127.0.0.1:8000/account/api/register/'
         document.getElementById('send-data').onclick = () => {
             sendCredentials()
         }
-
         function sendCredentials(){
             const email = document.getElementById('email').value
             const password = document.getElementById('password').value
@@ -34,7 +34,7 @@
                     password: password
                 }
                 console.log(email , password)
-                postData(login_url, data)
+                postData(register_url, data)
                 .then((data) => {
                     if (data.ok) {
                         data.json().then((data) => console.log(data))
@@ -46,6 +46,7 @@
                 console.log('not data')
             }
         }
+
     </script>
 </body>
 </html>

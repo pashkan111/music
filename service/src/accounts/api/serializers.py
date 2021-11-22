@@ -1,6 +1,6 @@
 from django.db.models import fields
 from rest_framework import serializers, exceptions
-from ..models import AuthUser, CocialLink
+from ..models import SocialLink
 from ..services.base_auth import User
 from django.contrib.auth import authenticate
 
@@ -22,22 +22,19 @@ class RegisterSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
     email = serializers.CharField(max_length=255)
     password = serializers.CharField(max_length=255)
-# class LoginSerializer(serializers.Serializer):
-#     email = serializers.CharField(max_length=255)
-#     password = serializers.CharField(max_length=255)
 
     def validate(self, data):
         email = data['email']
         password = data.get('password')
         user = authenticate(email=email, password=password)
         if not user:
-            return exceptions.AuthenticationFailed('No user matching this token was found')
+            raise exceptions.AuthenticationFailed('No user was found')
         return user
 
 
 class AuthSerializer(serializers.ModelSerializer):
     class Meta:
-        model = AuthUser
+        model = User
         fields = (
         'email', 'country', 'city', 'display_name', 'avatar',
     )
@@ -45,18 +42,18 @@ class AuthSerializer(serializers.ModelSerializer):
 
 class AuthorLinkSerializer(serializers.ModelSerializer):
     class Meta:
-        model = CocialLink
+        model = SocialLink
         fields = (
             'link',
         )
 
 
 class AuthorSerializer(serializers.ModelSerializer):
-    cocial_link = AuthorLinkSerializer(many=True)
+    social_link = AuthorLinkSerializer(many=True)
     class Meta:
-        model = AuthUser
+        model = User
         fields = (
-       'id', 'email', 'country', 'city', 'display_name', 'avatar',
+       'id', 'email', 'country', 'city', 'display_name', 'avatar', 'social_link'
     )
         read_only_fields = fields
 

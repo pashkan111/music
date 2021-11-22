@@ -13,9 +13,9 @@ function getCookie(name) {
     return cookieValue;
 }
 
-console.log(111111)
+console.log(22222222)
 const csrf_token = getCookie('csrftoken')
-
+console.log(csrf_token)
 async function postData(url, data) {
     const response = await fetch(url, {
         method: 'POST',
@@ -23,11 +23,11 @@ async function postData(url, data) {
         credentials: 'same-origin',
         headers: {
           'Content-Type': 'application/json',
-          "X-CSRFTOKEN":  csrftoken
+          "X-CSRFTOKEN":  csrf_token
         },
         redirect: 'follow',
         referrerPolicy: 'no-referrer', 
         body: JSON.stringify(data) 
     });
-      return await response.json(); 
+      return await response; 
   }

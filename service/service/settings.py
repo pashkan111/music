@@ -27,7 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'src.mainapp',
+    'src.music',
     'src.accounts',
     
     'rest_framework',
@@ -81,10 +81,6 @@ DATABASES = {
     }
 }
 
-
-# Password validation
-# https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -123,7 +119,10 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
 
 
 ALGORITHM = 'HS256'
@@ -147,5 +146,22 @@ SWAGGER_SETTINGS = {
         }
     }
 }
+
+# LOGGING = {
+#     'version': 1,
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     'loggers': {
+#         'django.db.backends': {
+#             'level': 'DEBUG',
+#         },
+#     },
+#     'root': {
+#         'handlers': ['console'],
+#     }
+# }
 AUTH_USER_MODEL = 'accounts.User'
 GOOGLE_CLIENT_ID = '21347099431-sc85nsvprj8sjgcp6r619gc5t9sf05n1.apps.googleusercontent.com'
