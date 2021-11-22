@@ -1,7 +1,21 @@
 from django.http import response
-from rest_framework import status, mixins, serializers, viewsets, parsers, permissions, generics, views
+from rest_framework import (
+    status,
+    mixins,
+    viewsets,
+    parsers,
+    permissions,
+    generics,
+    views,
+)
 from rest_framework.response import Response
-from .serializers import AuthSerializer, AuthorSerializer, AuthorLinkSerializer, LoginSerializer, RegisterSerializer
+from .serializers import (
+    AuthSerializer,
+    AuthorSerializer,
+    AuthorLinkSerializer,
+    LoginSerializer,
+    RegisterSerializer,
+)
 from src.base.permissions import IsAuthor
 from ..services.base_auth import User
 
@@ -9,10 +23,9 @@ from ..services.base_auth import User
 class AuthView(viewsets.ModelViewSet):
     serializer_class = AuthSerializer
     permission_classes = [permissions.AllowAny]
-    parser_classes = (parsers.MultiPartParser, )
+    parser_classes = (parsers.MultiPartParser,)
 
     def get_queryset(self):
-        # return User.objects.first()
         user = self.request.user
         if not user.is_anonymous:
             return user
@@ -23,7 +36,7 @@ class AuthView(viewsets.ModelViewSet):
 
 
 class AuthorView(viewsets.ReadOnlyModelViewSet):
-    queryset = User.objects.all().prefetch_related('link_related')
+    queryset = User.objects.all().prefetch_related("link_related")
     serializer_class = AuthorSerializer
 
 
@@ -47,20 +60,18 @@ class Register(generics.GenericAPIView, mixins.CreateModelMixin):
 
 
 class Login(views.APIView):
-
     serializer_class = LoginSerializer
     queryset = User.objects.all()
-    
+
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid(raise_exception=True):
             try:
-                user = User.objects.get(email=request.data['email'])
+                user = User.objects.get(email=request.data["email"])
             except User.DoesNotExist:
-                return Response(data='Invalid credentials', status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    data="Invalid credentials", status=status.HTTP_400_BAD_REQUEST
+                )
             token = user.token
             return Response(token)
         return Response(status=status.HTTP_401_UNAUTHORIZED)
-
-
-    

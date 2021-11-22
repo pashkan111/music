@@ -1,8 +1,14 @@
-from django.db.models import query
-from django.http import request
 from django.http.response import FileResponse, Http404
-from .serializers import GenreSerializer, LicenseSerializer, AlbumSerializer, AuthorTrackSerializer, CreateAuthorTrackSerializer, AuthorPlaylistSerializer, CreateAuthorPlaylistSerializer
-from rest_framework import generics, pagination, views, viewsets, parsers
+from .serializers import (
+    GenreSerializer,
+    LicenseSerializer,
+    AlbumSerializer,
+    AuthorTrackSerializer,
+    CreateAuthorTrackSerializer,
+    AuthorPlaylistSerializer,
+    CreateAuthorPlaylistSerializer,
+)
+from rest_framework import generics, views, viewsets, parsers
 from src.music import models
 from src.base import permissions, mixins
 from src.accounts.services.services import delete_old_file
@@ -14,6 +20,7 @@ class GenreListView(generics.ListAPIView):
     """
     List of genres
     """
+
     serializer_class = GenreSerializer
     queryset = models.Genre.objects.all()
 
@@ -22,23 +29,28 @@ class LicenseListView(viewsets.ModelViewSet):
     """
     List of licenses
     """
+
     serializer_class = LicenseSerializer
-    permission_classes = (permissions.IsAuthor, )
-    
+    permission_classes = (permissions.IsAuthor,)
+
     def get_queryset(self):
         return models.License.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-        
+
 
 class UserAlbumView(viewsets.ModelViewSet):
     """
     Albums of certain user
     """
+
     serializer_class = AlbumSerializer
-    permission_classes = (permissions.IsAuthor, )
-    parser_classes = (parsers.JSONParser, parsers.MultiPartParser, )
+    permission_classes = (permissions.IsAuthor,)
+    parser_classes = (
+        parsers.JSONParser,
+        parsers.MultiPartParser,
+    )
 
     def get_queryset(self):
         return models.Album.objects.filter(user=self.request.user)
@@ -58,9 +70,9 @@ class AlbumView(generics.ListAPIView):
     """
 
     serializer_class = AlbumSerializer
-    
+
     def get_queryset(self):
-        user_id = self.kwargs.get('id', None)
+        user_id = self.kwargs.get("id", None)
         if user_id is not None:
             return models.Album.objects.filter(user__id=user_id, private=False)
 
@@ -71,12 +83,10 @@ class TrackView(mixins.SerializerMixin, viewsets.ModelViewSet):
     """
 
     serializer_class = CreateAuthorTrackSerializer
-    permission_classes = (permissions.IsAuthor, )
+    permission_classes = (permissions.IsAuthor,)
     # parser_classes = (parsers.JSONParser,)
-    parser_classes = (parsers.MultiPartParser, )
-    serializer_classes_by_action = {
-        'list': AuthorTrackSerializer
-    }
+    parser_classes = (parsers.MultiPartParser,)
+    serializer_classes_by_action = {"list": AuthorTrackSerializer}
 
     def create(self, request, *args, **kwargs):
         print(request.data)
@@ -98,19 +108,18 @@ class PlaylistView(mixins.SerializerMixin, viewsets.ModelViewSet):
     """
     CRUD of playlists
     """
+
     serializer_class = CreateAuthorPlaylistSerializer
-    permission_classes = (permissions.IsAuthor, )
-    parser_classes = (parsers.MultiPartParser, )
-    serializer_classes_by_action = {
-        'list': AuthorPlaylistSerializer
-    }
+    permission_classes = (permissions.IsAuthor,)
+    parser_classes = (parsers.MultiPartParser,)
+    serializer_classes_by_action = {"list": AuthorPlaylistSerializer}
 
     def get_queryset(self):
         return models.Playlist.objects.filter(user=self.request.user)
 
     def perform_destroy(self, instance):
         if instance.file:
-            delete_old_file(instance.image.path) 
+            delete_old_file(instance.image.path)
         return super().perform_destroy(instance)
 
     def perform_create(self, serializer):
@@ -121,6 +130,7 @@ class TrackListView(generics.ListAPIView):
     """
     List of all tracks
     """
+
     serializer_class = AuthorTrackSerializer
     queryset = models.Track.objects.all()
     pagination_class = mixins.Pagination
@@ -130,27 +140,29 @@ class TrackAuthorListView(generics.ListAPIView):
     """
     List of certain author's tracks
     """
+
     serializer_class = AuthorTrackSerializer
     pagination_class = mixins.Pagination
 
     def get_queryset(self):
-        return models.Track.objects.filter(user__id=self.kwargs.get('pk'))
+        return models.Track.objects.filter(user__id=self.kwargs.get("pk"))
 
 
 class StreamingFileView(views.APIView):
     """
     stream track
     """
+
     def change_count_stream(self, track):
         track.plays_count += 1
         track.save()
 
     def get(self, request, *args, **kwargs):
-        track_id = kwargs.get('pk')
+        track_id = kwargs.get("pk")
         track = generics.get_object_or_404(models.Track, id=track_id)
         if os.path.exists(track.file.path):
             self.change_count_stream(track)
-            return FileResponse(open(track.file.path, 'rb'), filename=track.file.name)
+            return FileResponse(open(track.file.path, "rb"), filename=track.file.name)
         return Http404
 
 
@@ -158,16 +170,19 @@ class DownloadTrackView(views.APIView):
     """
     download track
     """
+
     def change_download_count(self):
         self.track.download += 1
         self.track.save()
 
     def get(self, request, *args, **kwargs):
-        track_id = kwargs.get('pk')
+        track_id = kwargs.get("pk")
         track = generics.get_object_or_404(models.Track, id=track_id)
         if os.path.exists(track.file.path):
             self.change_count_stream(track)
             return FileResponse(
-                open(track.file.path, 'rb'), filename=track.file.name, as_attachment=True
-                )
+                open(track.file.path, "rb"),
+                filename=track.file.name,
+                as_attachment=True,
+            )
         return Http404

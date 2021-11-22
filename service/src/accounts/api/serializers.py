@@ -8,13 +8,11 @@ from django.contrib.auth import authenticate
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = (
-            'email', 'password'
-        )
+        fields = ("email", "password")
 
     def create(self, validated_data):
-        email = validated_data.get('email')
-        password = validated_data.get('password')
+        email = validated_data.get("email")
+        password = validated_data.get("password")
         user = User.objects.create_user(email=email, password=password)
         return user
 
@@ -24,11 +22,11 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=255)
 
     def validate(self, data):
-        email = data['email']
-        password = data.get('password')
+        email = data["email"]
+        password = data.get("password")
         user = authenticate(email=email, password=password)
         if not user:
-            raise exceptions.AuthenticationFailed('No user was found')
+            raise exceptions.AuthenticationFailed("No user was found")
         return user
 
 
@@ -36,24 +34,32 @@ class AuthSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-        'email', 'country', 'city', 'display_name', 'avatar',
-    )
+            "email",
+            "country",
+            "city",
+            "display_name",
+            "avatar",
+        )
 
 
 class AuthorLinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = SocialLink
-        fields = (
-            'link',
-        )
+        fields = ("link",)
 
 
 class AuthorSerializer(serializers.ModelSerializer):
     social_link = AuthorLinkSerializer(many=True)
+
     class Meta:
         model = User
         fields = (
-       'id', 'email', 'country', 'city', 'display_name', 'avatar', 'social_link'
-    )
+            "id",
+            "email",
+            "country",
+            "city",
+            "display_name",
+            "avatar",
+            "social_link",
+        )
         read_only_fields = fields
-

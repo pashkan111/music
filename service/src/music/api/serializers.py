@@ -1,5 +1,3 @@
-from os import read
-from django.db.models import fields
 from rest_framework import serializers
 from src.music import models
 from src.accounts.services.services import delete_old_file
@@ -14,27 +12,21 @@ class UserSerializer(serializers.StringRelatedField):
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Genre
-        fields = '__all__'
+        fields = "__all__"
 
 
 class LicenseSerializer(serializers.ModelSerializer):
     user = UserSerializer()
+
     class Meta:
         model = models.License
-        fields = ('user', 'text')
+        fields = ("user", "text")
 
 
 class AlbumSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Album
-        fields = (
-            'id',
-            'name',
-            'description',
-            'private',
-            'image',
-            'created'
-        )
+        fields = ("id", "name", "description", "private", "image", "created")
 
     def update(self, instance, validated_data):
         image = instance.image
@@ -43,25 +35,24 @@ class AlbumSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 
-# class CreateAuthorTrackSerializer(serializers.BaseSerializer):
 class CreateAuthorTrackSerializer(serializers.ModelSerializer):
     plays_count = serializers.IntegerField(read_only=True)
     download = serializers.IntegerField(read_only=True)
     likes_count = serializers.IntegerField(read_only=True)
-    
+
     class Meta:
         model = models.Track
         fields = (
-            'id',
-            'name',
-            'license',
-            'album',
-            'genre',
-            'file',
-            'created',
-            'plays_count',
-            'download',
-            'likes_count'
+            "id",
+            "name",
+            "license",
+            "album",
+            "genre",
+            "file",
+            "created",
+            "plays_count",
+            "download",
+            "likes_count",
         )
 
     def update(self, instance, validated_data):
@@ -79,12 +70,7 @@ class AuthorTrackSerializer(CreateAuthorTrackSerializer):
 class CreateAuthorPlaylistSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Playlist
-        fields = (
-            'id',
-            'name',
-            'tracks',
-            'image'
-        )
+        fields = ("id", "name", "tracks", "image")
 
     def update(self, instance, validated_data):
         if instance.image:
