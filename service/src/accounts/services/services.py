@@ -10,6 +10,10 @@ def get_album_path(instance, file):
     return f"album/{instance.user.id}/{file}"
 
 
+def get_track_image_path(instance, file):
+    return f"track/{instance.user.id}/{file}"
+
+
 def get_track_path(instance, file):
     return f"track/{instance.id}/{file}"
 

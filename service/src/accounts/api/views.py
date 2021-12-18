@@ -59,7 +59,7 @@ class Register(generics.GenericAPIView, mixins.CreateModelMixin):
         return self.create(*args, **kwargs)
 
 
-class Login(views.APIView):
+class Login(generics.GenericAPIView):
     serializer_class = LoginSerializer
     queryset = User.objects.all()
 

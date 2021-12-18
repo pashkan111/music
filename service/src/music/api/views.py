@@ -16,7 +16,7 @@ from src.accounts.services.base_auth import User
 import os
 
 
-class GenreListView(generics.ListAPIView):
+class GenreListView(generics.ListCreateAPIView):
     """
     List of genres
     """
@@ -101,6 +101,7 @@ class TrackView(mixins.SerializerMixin, viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         if instance.file:
             delete_old_file(instance.image.path)
+            delete_old_file(instance.file.path)
         return super().perform_destroy(instance)
 
 
@@ -145,7 +146,9 @@ class TrackAuthorListView(generics.ListAPIView):
     pagination_class = mixins.Pagination
 
     def get_queryset(self):
-        return models.Track.objects.filter(user__id=self.kwargs.get("pk"))
+        return models.Track.objects.filter(
+            user__id=self.kwargs.get("pk"), private=False, album__private=False
+        )
 
 
 class StreamingFileView(views.APIView):
@@ -179,7 +182,7 @@ class DownloadTrackView(views.APIView):
         track_id = kwargs.get("pk")
         track = generics.get_object_or_404(models.Track, id=track_id)
         if os.path.exists(track.file.path):
-            self.change_count_stream(track)
+            self.change_download_count(track)
             return FileResponse(
                 open(track.file.path, "rb"),
                 filename=track.file.name,

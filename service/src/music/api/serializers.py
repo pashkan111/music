@@ -2,6 +2,7 @@ from rest_framework import serializers
 from src.music import models
 from src.accounts.services.services import delete_old_file
 from src.accounts.services.base_auth import User
+from src.accounts.api.serializers import AuthorSerializer
 
 
 class UserSerializer(serializers.StringRelatedField):
@@ -39,6 +40,7 @@ class CreateAuthorTrackSerializer(serializers.ModelSerializer):
     plays_count = serializers.IntegerField(read_only=True)
     download = serializers.IntegerField(read_only=True)
     likes_count = serializers.IntegerField(read_only=True)
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = models.Track
@@ -53,6 +55,9 @@ class CreateAuthorTrackSerializer(serializers.ModelSerializer):
             "plays_count",
             "download",
             "likes_count",
+            "private",
+            "image",
+            "user",
         )
 
     def update(self, instance, validated_data):
@@ -65,12 +70,13 @@ class AuthorTrackSerializer(CreateAuthorTrackSerializer):
     license = LicenseSerializer()
     genre = GenreSerializer(many=True)
     album = AlbumSerializer()
+    user = AuthorSerializer()
 
 
 class CreateAuthorPlaylistSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Playlist
-        fields = ("id", "name", "tracks", "image")
+        fields = ("id", "name", "tracks", "image", "user")
 
     def update(self, instance, validated_data):
         if instance.image:
