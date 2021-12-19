@@ -7,6 +7,8 @@ from .serializers import (
     CreateAuthorTrackSerializer,
     AuthorPlaylistSerializer,
     CreateAuthorPlaylistSerializer,
+    CommentAuthorSerializer,
+    CommentSerializer,
 )
 from rest_framework import generics, views, viewsets, parsers
 from src.music import models
@@ -14,6 +16,7 @@ from src.base import permissions, mixins
 from src.accounts.services.services import delete_old_file
 from src.accounts.services.base_auth import User
 import os
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 class GenreListView(generics.ListCreateAPIView):
@@ -89,7 +92,6 @@ class TrackView(mixins.SerializerMixin, viewsets.ModelViewSet):
     serializer_classes_by_action = {"list": AuthorTrackSerializer}
 
     def create(self, request, *args, **kwargs):
-        print(request.data)
         return super().create(request, *args, **kwargs)
 
     def get_queryset(self):
@@ -135,6 +137,8 @@ class TrackListView(generics.ListAPIView):
     serializer_class = AuthorTrackSerializer
     queryset = models.Track.objects.all()
     pagination_class = mixins.Pagination
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["name", "user__display_name", "album__name", "genre__name"]
 
 
 class TrackAuthorListView(generics.ListAPIView):
@@ -144,6 +148,8 @@ class TrackAuthorListView(generics.ListAPIView):
 
     serializer_class = AuthorTrackSerializer
     pagination_class = mixins.Pagination
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["name", "user__display_name", "album__name", "genre__name"]
 
     def get_queryset(self):
         return models.Track.objects.filter(
@@ -189,3 +195,21 @@ class DownloadTrackView(views.APIView):
                 as_attachment=True,
             )
         return Http404
+
+
+class CommentTrackView(generics.ListAPIView):
+    serializer_class = CommentSerializer
+
+    def get_queryset(self):
+        return models.Comment.objects.filter(track_id=self.kwargs.get("pk"))
+
+
+class CommentView(viewsets.ModelViewSet):
+    serializer_class = CommentAuthorSerializer
+    permission_classes = (permissions.IsAuthor,)
+
+    def get_queryset(self):
+        return models.Comment.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)

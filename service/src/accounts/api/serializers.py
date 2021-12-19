@@ -49,8 +49,6 @@ class AuthorLinkSerializer(serializers.ModelSerializer):
 
 
 class AuthorSerializer(serializers.ModelSerializer):
-    # social_link = AuthorLinkSerializer(many=True)
-
     class Meta:
         model = User
         fields = (
@@ -60,6 +58,5 @@ class AuthorSerializer(serializers.ModelSerializer):
             "city",
             "display_name",
             "avatar",
-            # "social_link",
         )
         read_only_fields = fields

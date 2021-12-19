@@ -79,3 +79,12 @@ class User(AbstractUser):
             to_encode, key=settings.SECRET_KEY, algorithm=settings.ALGORITHM
         )
         return encoded_jwt
+
+    @property
+    def show_username(self):
+        if self.display_name:
+            return self.display_name
+        else:
+            return self.username
+        
+

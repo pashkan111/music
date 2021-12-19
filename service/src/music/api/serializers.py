@@ -86,3 +86,17 @@ class CreateAuthorPlaylistSerializer(serializers.ModelSerializer):
 
 class AuthorPlaylistSerializer(CreateAuthorPlaylistSerializer):
     tracks = AuthorTrackSerializer(many=True, read_only=True)
+
+
+class CommentAuthorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Comment
+        fields = ("id", "created", "text", "track")
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    user = AuthorSerializer()
+
+    class Meta:
+        model = models.Comment
+        fields = ("track", "user", "created", "text")

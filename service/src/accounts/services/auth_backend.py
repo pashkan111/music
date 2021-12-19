@@ -49,9 +49,8 @@ class SettingsBackend(ModelBackend):
         Custom authentication. While attempting log in admin,
         username comes instead of email.
         """
-        if username:
-            user = User.objects.filter(email=username).first()
-        else:
+        user = User.objects.filter(email=username).first()
+        if user is None:
             return None
         if user.check_password(password):
             return user
