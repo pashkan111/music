@@ -8,12 +8,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "w+lz0@45ud#8)$6-*qc#x30^@p44rdmbxo)ft&4141zgaqc-ce"
+SECRET_KEY = os.environ("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+ALLOWED_HOSTS = os.environ("DJANGO_ALLOWED_HOSTS").split(" ")
 
 
 # Application definition
@@ -70,12 +70,12 @@ WSGI_APPLICATION = "service.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "music_service",
-        "USER": "postgres",
-        "PASSWORD": "1234",
-        "HOST": "localhost",
-        "PORT": "5432",
+        "ENGINE": os.environ("POSTGRES_ENGINE"),
+        "NAME": os.environ("POSTGRES_NAME"),
+        "USER": os.environ("POSTGRES_USER"),
+        "PASSWORD": os.environ("POSTGRES_PASSWORD"),
+        "HOST": os.environ("POSTGRES_HOST"),
+        "PORT": os.environ("POSTGRES_PORT"),
     }
 }
 
@@ -117,10 +117,10 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 STATIC_URL = "/static/"
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-]
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, "static"),
+# ]
 
 
 ALGORITHM = "HS256"
@@ -162,3 +162,10 @@ AUTH_USER_MODEL = "accounts.User"
 GOOGLE_CLIENT_ID = (
     "21347099431-sc85nsvprj8sjgcp6r619gc5t9sf05n1.apps.googleusercontent.com"
 )
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "http://127.0.0.1",
+]
