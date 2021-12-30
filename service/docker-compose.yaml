@@ -38,5 +38,5 @@ services:
     depends_on:
       - web
 
-# volumes:
-#   audio_library_postgres_data:
+volumes:
+  audio_library_postgres_data:

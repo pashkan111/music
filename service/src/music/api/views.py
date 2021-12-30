@@ -1,4 +1,4 @@
-from django.http.response import FileResponse, Http404
+from django.http.response import FileResponse, Http404, HttpResponse
 from .serializers import (
     GenreSerializer,
     LicenseSerializer,
@@ -171,7 +171,9 @@ class StreamingFileView(views.APIView):
         track = generics.get_object_or_404(models.Track, id=track_id)
         if os.path.exists(track.file.path):
             self.change_count_stream(track)
-            return FileResponse(open(track.file.path, "rb"), filename=track.file.name)
+            response = HttpResponse("", content_type="audio/mpeg", status=206)
+            response["X-Accel-Redirect"] = f"/mp3/{track.file.name}"
+            return response
         return Http404
 
 
