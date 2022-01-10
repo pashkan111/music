@@ -8,12 +8,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = "w+lz0@45ud#8)$6-*qc#x30^@p44rdmbxo)ft&4141zgaqc-ce"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -70,12 +70,12 @@ WSGI_APPLICATION = "service.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": os.environ.get("POSTGRES_ENGINE"),
-        "NAME": os.environ.get("POSTGRES_NAME"),
-        "USER": os.environ.get("POSTGRES_USER"),
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
-        "HOST": os.environ.get("POSTGRES_HOST"),
-        "PORT": os.environ.get("POSTGRES_PORT"),
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "music_service",
+        "USER": "postgres",
+        "PASSWORD": "1234",
+        "HOST": "db",
+        "PORT": 5432,
     }
 }
 
@@ -130,9 +130,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "src.accounts.services.auth_backend.AuthBackend",
     ),
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.AllowAny",
-    ],
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     "DEFAULT_FILTERS_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
 }
 
@@ -159,9 +157,7 @@ SWAGGER_SETTINGS = {
 #     }
 # }
 AUTH_USER_MODEL = "accounts.User"
-GOOGLE_CLIENT_ID = (
-    "21347099431-sc85nsvprj8sjgcp6r619gc5t9sf05n1.apps.googleusercontent.com"
-)
+
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost",
